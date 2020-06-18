@@ -17,7 +17,8 @@ public class TestDAO {
 
 		NewUfoSightingsDAO dao = new NewUfoSightingsDAO();
 
-		System.out.println(dao.loadAllStates());
+	//	System.out.println(dao.loadAllShapes(1998));
+		System.out.println(dao.loadAllSightingsSimulazione(1998, "circle"));
 	}
 
 }

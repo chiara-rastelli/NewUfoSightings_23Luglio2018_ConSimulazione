@@ -1,9 +1,14 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.newufosightings.model.Model;
+import it.polito.tdp.newufosightings.model.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -33,7 +38,7 @@ public class FXMLController {
     private Button btnSelezionaAnno;
 
     @FXML
-    private ComboBox<?> cmbBoxForma;
+    private ComboBox<String> cmbBoxForma;
 
     @FXML
     private Button btnCreaGrafo;
@@ -49,12 +54,42 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if (this.txtAnno.getText() == null) {
+    		this.txtResult.appendText("Devi prima inserire un anno!\n");
+    		return;
+    	}
+    	if (this.cmbBoxForma.getValue() == null) {
+    		this.txtResult.appendText("Devi prima inserire una forma!\n");
+    		return;
+    	}
+    	this.model.creaGrafo(Integer.parseInt(this.txtAnno.getText()), this.cmbBoxForma.getValue());
+    	Map<State,Integer> mappaStatiPesi = new HashMap<>(this.model.getSommaPesi());
+    	this.txtResult.appendText("Ecco i risultati della creazione del grafo: \n");
+    	for (State s : mappaStatiPesi.keySet()) {
+    		this.txtResult.appendText("Per lo stato "+s.toString()+" la somma dei pesi degli archi adiacenti e': "+mappaStatiPesi.get(s)+"\n");
+    	}
     }
 
     @FXML
     void doSelezionaAnno(ActionEvent event) {
 
+    	this.txtResult.clear();
+    	try {
+    		int year = Integer.parseInt(this.txtAnno.getText());
+    		
+    		if (year < 1910 || year > 2014) {
+    			this.txtResult.appendText("L'anno deve essee compreso tra il 1910 e il 2014, estremi inclusi!");
+    			return;
+    		}
+    		
+    		List<String> forme = new ArrayList<>(this.model.getAllShapes(year));
+    		this.cmbBoxForma.getItems().addAll(forme);
+    	}catch(NumberFormatException e) {
+    		this.txtResult.appendText("Devi inserire un anno valido!");
+    		return;
+    	}
+    	
     }
 
     @FXML
